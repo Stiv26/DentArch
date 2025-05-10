@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('archive', function (Blueprint $table) {
+        Schema::create('archives', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('file');
+            $table->string('type');
+            $table->string('size');
             $table->dateTime('uploaded_at');
+            $table->timestamps();
         });
     }
 

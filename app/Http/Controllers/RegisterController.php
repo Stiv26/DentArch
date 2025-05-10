@@ -26,6 +26,6 @@ class RegisterController extends Controller
             'password' => $validated['password'],
         ]);
 
-        return redirect()->route('login'); // Ganti dengan route tujuan setelah registrasi
+        return redirect()->route('login');
     }
 }

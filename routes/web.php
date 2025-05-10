@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ArchiveController;
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login.authenticate');
@@ -14,3 +15,7 @@ Route::post('/register', [RegisterController::class, 'store'])->name('register.s
 Route::get('/', function () {
     return view('archive');
 })->middleware('auth');
+
+Route::post('/upload', [ArchiveController::class, 'store'])
+    ->name('upload.store')
+    ->middleware('auth');
