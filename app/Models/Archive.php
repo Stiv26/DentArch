@@ -9,20 +9,14 @@ class Archive extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'file',
-        'uploaded_at'
-    ];
-
-    protected $casts = [
-        'uploaded_at' => 'datetime'
-    ];
-
-
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
     }
 
     public function getFileIconAttribute()

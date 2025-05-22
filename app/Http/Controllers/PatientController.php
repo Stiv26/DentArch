@@ -3,26 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Patient;
 use App\Models\Archive;
+use Illuminate\Support\Facades\Storage;
 
-class ArchiveController extends Controller
+class PatientController extends Controller
 {
-    public function index()
-    {
-        $recentFiles = Archive::where('user_id', auth()->id())
-            ->orderBy('uploaded_at', 'desc')
-            ->take(3)
-            ->get();
-
-        $allFiles = Archive::where('user_id', auth()->id())
-            ->orderBy('uploaded_at', 'desc')
-            ->get();
-
-        return view('archive', compact('recentFiles', 'allFiles'));
-    }
-
     public function store(Request $request)
     {
         $patientData = $request->validate([
@@ -38,11 +24,10 @@ class ArchiveController extends Controller
             'marital_status' => 'nullable',
             'reference' => 'nullable',
             'companion' => 'nullable',
+            'files.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,csv,xlsx,xls|max:10240'
         ]);
 
-        // Tambahkan user_id ke data pasien
-        $patientData['user_id'] = auth()->id();
-
+        
         // Simpan data pasien
         $patient = Patient::create($patientData);
 
@@ -50,7 +35,7 @@ class ArchiveController extends Controller
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
                 $path = $file->store('uploads', 'public');
-                $size = (new ArchiveController)->formatSizeUnits($file->getSize());
+                $size = $this->formatSizeUnits($file->getSize());
 
                 Archive::create([
                     'user_id' => auth()->id(),
@@ -78,14 +63,5 @@ class ArchiveController extends Controller
             $bytes = $bytes . ' B';
         }
         return $bytes;
-    }
-
-    public function destroy($id)
-    {
-        $file = Archive::findOrFail($id);
-        Storage::delete('public/uploads/' . $file->file);
-        $file->delete();
-
-        return redirect()->back()->with('success', 'File deleted successfully');
     }
 }
