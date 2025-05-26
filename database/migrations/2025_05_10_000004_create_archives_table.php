@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
+            $table->string('file_name');
             $table->string('file');
             $table->string('type');
-            $table->string('size');
+            $table->double('size');
+            $table->string('unit_size');
             $table->dateTime('uploaded_at');
             $table->timestamps();
         });

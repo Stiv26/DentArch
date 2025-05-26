@@ -11,18 +11,24 @@ class Patient extends Model
 
     protected $fillable = [
         'user_id',
-        'name',
+        'fullname',
         'gender',
-        'birth_date',
-        'phone',
         'address',
+        'phone_number',
+        'birthdate',
         'weight',
         'height',
         'job',
-        'ethnicity',
+        'tribes',
         'marital_status',
         'reference',
-        'companion'
+        'with_suspect',
+    ];
+
+    protected $casts = [
+        'birthdate' => 'date',
+        'weight' => 'decimal:2',
+        'height' => 'decimal:2',
     ];
 
     public function archives()

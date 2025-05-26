@@ -13,20 +13,18 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'create'])->name('register');
 Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 
-Route::get('/', [ArchiveController::class, 'index'])->middleware('auth');
+Route::get('/', function () {
+    return view('welcome');
+});
+Route::get('/dentarch', [ArchiveController::class, 'index'])->middleware('auth');
 
-Route::delete('/files/{id}', [ArchiveController::class, 'destroy'])
-    ->name('file.delete')
-    ->middleware('auth');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dentarch', [ArchiveController::class, 'index'])->name('archive.index');
+    Route::post('/archive', [ArchiveController::class, 'store'])->name('archive.store');
 
-Route::post('/upload', [ArchiveController::class, 'store'])
-    ->name('upload.store')
-    ->middleware('auth');
-
-Route::post('/patients', [PatientController::class, 'store'])
-    ->name('patients.store')
-    ->middleware('auth');
-
-Route::post('/upload', [ArchiveController::class, 'store'])
-    ->name('upload.store')
-    ->middleware('auth');
+    Route::get('/archive/{id}/edit', [ArchiveController::class, 'edit']);
+    Route::put('/archive/{id}', [ArchiveController::class, 'update'])->name('archive.update');
+    
+    Route::delete('/file/{id}', [ArchiveController::class, 'destroy'])->name('file.delete');
+    Route::delete('/file/remove/{id}', [ArchiveController::class, 'removeFile'])->name('file.remove');
+});
