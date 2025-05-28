@@ -24,6 +24,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/archive/{id}/edit', [ArchiveController::class, 'edit']);
     Route::put('/archive/{id}', [ArchiveController::class, 'update'])->name('archive.update');
+
+    Route::get('/archive/{id}/show', [ArchiveController::class, 'show']);
     
     Route::delete('/file/{id}', [ArchiveController::class, 'destroy'])->name('file.delete');
     Route::delete('/file/remove/{id}', [ArchiveController::class, 'removeFile'])->name('file.remove');

@@ -95,14 +95,35 @@
                                 <td class="px-6 py-4">{{ $patient->birthdate }}</td>
                                 <td class="px-6 py-4">
                                     <div class="flex space-x-2">
-                                        <button type="button"
-                                            onclick="document.getElementById('').classList.remove('hidden')"
+                                        <button data-patient-id="{{ $patient->id }}"
+                                            data-fullname="{{ $patient->fullname }}"
+                                            data-gender="{{ $patient->gender }}"
+                                            data-address="{{ $patient->address }}"
+                                            data-phone_number="{{ $patient->phone_number }}"
+                                            data-weight="{{ $patient->weight }}" data-height="{{ $patient->height }}"
+                                            data-job="{{ $patient->job }}" data-tribes="{{ $patient->tribes }}"
+                                            data-marital_status="{{ $patient->marital_status }}"
+                                            data-reference="{{ $patient->reference }}"
+                                            data-with_suspect="{{ $patient->with_suspect }}"
+                                            data-birthdate="{{ $patient->birthdate }}"
+                                            data-createde_at="{{ $patient->birthdate }}"
+                                            data-updated_at="{{ $patient->birthdate }}"
                                             class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors"
-                                            title="">
+                                            title="Show">
                                             <i class="fa fa-eye"></i>
                                         </button>
 
                                         <button data-patient-id="{{ $patient->id }}"
+                                            data-fullname="{{ $patient->fullname }}"
+                                            data-gender="{{ $patient->gender }}"
+                                            data-address="{{ $patient->address }}"
+                                            data-phone_number="{{ $patient->phone_number }}"
+                                            data-weight="{{ $patient->weight }}" data-height="{{ $patient->height }}"
+                                            data-job="{{ $patient->job }}" data-tribes="{{ $patient->tribes }}"
+                                            data-marital_status="{{ $patient->marital_status }}"
+                                            data-reference="{{ $patient->reference }}"
+                                            data-with_suspect="{{ $patient->with_suspect }}"
+                                            data-birthdate="{{ $patient->birthdate }}"
                                             class="bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg transition-colors"
                                             title="Edit">
                                             <i class="fa fa-edit"></i>
@@ -147,7 +168,8 @@
                         @csrf
                         <!-- Personal Information -->
                         <div class="bg-[#1a1a1a] p-6 rounded-xl mb-6">
-                            <h4 class="text-blue-400 font-bold mb-4"><i class="fa fa-user mr-2"></i>Personal Information
+                            <h4 class="text-blue-400 font-bold mb-4"><i class="fa fa-user mr-2"></i>Personal
+                                Information
                             </h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -720,36 +742,36 @@
                     '<span class="text-xs bg-blue-600 px-2 py-1 rounded-full ml-2">EXISTING</span>';
 
                 item.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <i class="fa fa-file-${getFileIcon(file.type)} text-blue-400"></i>
-                    <div>
-                        <div class="flex items-center">
-                            ${file.file_name}
-                            ${statusBadge}
-                        </div>
-                        <div class="text-xs text-gray-400">${file.size}</div>
+            <div class="flex items-center gap-2">
+                <i class="fa fa-file-${getFileIcon(file.type)} text-blue-400"></i>
+                <div>
+                    <div class="flex items-center">
+                        ${file.file_name}
+                        ${statusBadge}
                     </div>
+                    <div class="text-xs text-gray-400">${file.size}</div>
                 </div>
-                <div class="flex gap-2">
-                    ${!isNew ? `
-                                <a href="/storage/${file.file}" target="_blank" class="text-blue-400 hover:underline text-xs">
-                                    <i class="fa fa-eye"></i> View
-                                </a>
-                                <a href="/storage/${file.file}" download class="text-green-400 hover:underline text-xs">
-                                    <i class="fa fa-download"></i> Download
-                                </a>
-                                <button type="button" class="delete-file-btn text-red-400 hover:text-red-300 text-xs" 
-                                        onclick="deleteExistingFile(${file.id}, this.closest('.flex'))">
-                                    <i class="fa fa-trash"></i> Delete
-                                </button>
-                            ` : `
-                                <button type="button" class="text-yellow-400 hover:text-yellow-300 text-xs" 
-                                        onclick="removeNewFile('${file.id}')">
-                                    <i class="fa fa-times"></i> Remove
-                                </button>
-                            `}
-                </div>
-            `;
+            </div>
+            <div class="flex gap-2">
+                ${!isNew ? `
+                                                                                                    <a href="/storage/archives/${file.file}" target="_blank" class="text-blue-400 hover:underline text-xs">
+                                                                                                        <i class="fa fa-eye"></i> View
+                                                                                                    </a>
+                                                                                                    <a href="/storage/archives/${file.file}" download class="text-green-400 hover:underline text-xs">
+                                                                                                        <i class="fa fa-download"></i> Download
+                                                                                                    </a>
+                                                                                                    <button type="button" class="delete-file-btn text-red-400 hover:text-red-300 text-xs" 
+                                                                                                            onclick="deleteExistingFile(${file.id}, this.closest('.flex'))">
+                                                                                                        <i class="fa fa-trash"></i> Delete
+                                                                                                    </button>
+                                                                                                ` : `
+                                                                                                    <button type="button" class="text-yellow-400 hover:text-yellow-300 text-xs" 
+                                                                                                            onclick="removeNewFile('${file.id}')">
+                                                                                                        <i class="fa fa-times"></i> Remove
+                                                                                                    </button>
+                                                                                                `}
+            </div>
+        `;
 
                 return item;
             }
@@ -834,8 +856,8 @@
             function showToast(message, type = 'success') {
                 const toast = document.createElement('div');
                 toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 transition-all duration-300 ${
-                type === 'success' ? 'bg-green-600' : 'bg-red-600'
-            }`;
+            type === 'success' ? 'bg-green-600' : 'bg-red-600'
+        }`;
                 toast.textContent = message;
                 document.body.appendChild(toast);
 
@@ -872,53 +894,492 @@
                 return iconMap[type.toLowerCase()] || 'o';
             }
 
-            // Main script for modal - UPDATED
-            document.querySelectorAll('[data-patient-id]').forEach(button => {
-                button.addEventListener('click', function() {
-                    const patientId = this.getAttribute('data-patient-id');
-                    currentPatientId = patientId;
-                    const modal = document.getElementById('editPatientModal');
+            // FIXED: More specific selector for edit buttons only
+            document.addEventListener('DOMContentLoaded', function() {
+                // Use more specific selector for edit buttons only
+                document.querySelectorAll(
+                    'button[data-patient-id][title="Edit"], button[data-patient-id][onclick*="edit"]').forEach(
+                    button => {
+                        button.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
 
-                    // Reset file state first
-                    resetFileState();
+                            const patientId = this.getAttribute('data-patient-id');
+                            currentPatientId = patientId;
+                            const modal = document.getElementById('editPatientModal');
 
-                    fetch(`/archive/${patientId}/edit`)
+                            // Reset file state first
+                            resetFileState();
+
+                            fetch(`/archive/${patientId}/edit`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    document.getElementById('edit_fullname').value = data.patient
+                                        .fullname || '';
+                                    document.getElementById('edit_birthdate').value = data.patient
+                                        .birthdate || '';
+                                    document.getElementById('edit_gender').value = data.patient
+                                        .gender || '';
+                                    document.getElementById('edit_phone_number').value = data.patient
+                                        .phone_number || '';
+                                    document.getElementById('edit_address').value = data.patient
+                                        .address || '';
+                                    document.getElementById('edit_weight').value = data.patient
+                                        .weight || '';
+                                    document.getElementById('edit_height').value = data.patient
+                                        .height || '';
+                                    document.getElementById('edit_job').value = data.patient.job || '';
+                                    document.getElementById('edit_tribes').value = data.patient
+                                        .tribes || '';
+                                    document.getElementById('edit_marital_status').value = data.patient
+                                        .marital_status || '';
+                                    document.getElementById('edit_reference').value = data.patient
+                                        .reference || '';
+                                    document.getElementById('edit_with_suspect').value = data.patient
+                                        .with_suspect || '';
+
+                                    // Set form action
+                                    document.getElementById('editPatientForm').action =
+                                        `/archive/${data.patient.id}`;
+
+                                    // Store existing files
+                                    existingFiles = data.files || [];
+
+                                    // Update display
+                                    updateFileDisplay();
+
+                                    // Show modal
+                                    modal.classList.remove('hidden');
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    showToast('Failed to load patient data', 'error');
+                                });
+                        });
+                    });
+            });
+        </script>
+    </div>
+
+    <!-- Modal Show Patient -->
+    <div id="showPatientModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-[#2d2d2d] rounded-xl w-full max-w-4xl mx-4 my-8">
+                <!-- Modal Header -->
+                <div class="bg-black rounded-t-xl p-6 flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-white">
+                        <i class="fa fa-eye mr-2"></i>Patient Details
+                    </h3>
+                    <button onclick="closeShowModal()"
+                        class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6 max-h-[80vh] overflow-y-auto">
+
+                    <!-- PERSONAL INFO -->
+                    <div class="border-l-4 border-blue-400 bg-[#1a1a1a] p-6 rounded-r-xl mb-6">
+                        <h4 class="text-blue-400 font-bold mb-6 flex items-center text-xl">
+                            <i class="fa fa-user mr-3"></i>Personal Information
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">Full Name:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_fullname" class="text-white font-semibold text-lg">-</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">Gender:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_gender" class="text-white font-medium">-</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">Date of Birth:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_birthdate" class="text-white font-medium">-</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">Age:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_age" class="text-white font-medium">-</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">Phone Number:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_phone_number" class="text-white font-medium">-</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">Address:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_address" class="text-white font-medium">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Physical Info -->
+                    <div class="border-l-4 border-green-400 bg-[#1a1a1a] p-6 rounded-r-xl mb-6">
+                        <h4 class="text-green-400 font-bold mb-6 flex items-center text-xl">
+                            <i class="fa fa-heartbeat mr-3"></i>Physical Information
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                            <div class="space-y-2">
+                                <div class="text-gray-400 text-sm">Weight</div>
+                                <div class="flex items-center justify-center space-x-1">
+                                    <span id="show_weight" class="text-white font-bold text-2xl">-</span>
+                                    <span class="text-gray-400 text-sm">kg</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="text-gray-400 text-sm">Height</div>
+                                <div class="flex items-center justify-center space-x-1">
+                                    <span id="show_height" class="text-white font-bold text-2xl">-</span>
+                                    <span class="text-gray-400 text-sm">cm</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="text-gray-400 text-sm">BMI</div>
+                                <div class="flex flex-col items-center">
+                                    <span id="show_bmi" class="text-white font-bold text-2xl">-</span>
+                                    <span id="show_bmi_status" class="text-sm">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Details -->
+                    <div class="border-l-4 border-orange-400 bg-[#1a1a1a] p-6 rounded-r-xl mb-6">
+                        <h4 class="text-orange-400 font-bold mb-6 flex items-center text-xl">
+                            <i class="fa fa-info-circle mr-3"></i>Personal Details
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">Job/Occupation:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_job" class="text-white font-medium">-</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">Tribes/Ethnicity:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_tribes" class="text-white font-medium">-</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">Marital Status:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_marital_status" class="text-white font-medium">-</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">Reference:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_reference" class="text-white font-medium">-</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">With Suspect/Companion:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_with_suspect" class="text-white font-medium">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Patient Files Section -->
+                    <div class="border-l-4 border-purple-400 bg-[#1a1a1a] p-6 rounded-r-xl mb-6">
+                        <h4 class="text-purple-400 font-bold mb-6 flex items-center justify-between text-xl">
+                            <span><i class="fa fa-file-archive mr-3"></i>Patient Files</span>
+                            <span id="show_file_count" class="text-sm text-gray-400 font-normal">0 files</span>
+                        </h4>
+
+                        <!-- Files List -->
+                        <div id="show_files_container" class="hidden">
+                            <div id="show_files_list" class="space-y-4 max-h-80 overflow-y-auto">
+                                <!-- Files will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- No Files Message -->
+                        <div id="show_no_files" class="text-center py-8">
+                            <i class="fa fa-folder-open fa-3x text-gray-600 mb-4"></i>
+                            <p class="text-gray-400">No files available for this patient</p>
+                        </div>
+                    </div>
+
+                    <!-- Timestamps -->
+                    <div class="border-l-4 border-gray-400 bg-[#1a1a1a] p-6 rounded-r-xl">
+                        <h4 class="text-gray-400 font-bold mb-6 flex items-center text-xl">
+                            <i class="fa fa-clock mr-3"></i>Record Information
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">Created At:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_created_at" class="text-white font-medium">-</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/3">
+                                    <span class="text-gray-400 text-sm">Last Updated:</span>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <span id="show_updated_at" class="text-white font-medium">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Function to close the show modal
+            function closeShowModal() {
+                document.getElementById('showPatientModal').classList.add('hidden');
+            }
+
+            // Function to calculate age from birthdate
+            function calculateAge(birthdate) {
+                const today = new Date();
+                const birth = new Date(birthdate);
+                let age = today.getFullYear() - birth.getFullYear();
+                const monthDiff = today.getMonth() - birth.getMonth();
+
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                    age--;
+                }
+
+                return age;
+            }
+
+            // Function to calculate BMI and get status
+            function calculateBMI(weight, height) {
+                if (!weight || !height) return {
+                    bmi: '-',
+                    status: '-'
+                };
+
+                const heightInMeters = height / 100;
+                const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+
+                let status = '';
+                let statusClass = '';
+
+                if (bmi < 18.5) {
+                    status = 'Underweight';
+                    statusClass = 'text-blue-400';
+                } else if (bmi < 25) {
+                    status = 'Normal';
+                    statusClass = 'text-green-400';
+                } else if (bmi < 30) {
+                    status = 'Overweight';
+                    statusClass = 'text-yellow-400';
+                } else {
+                    status = 'Obese';
+                    statusClass = 'text-red-400';
+                }
+
+                return {
+                    bmi,
+                    status,
+                    statusClass
+                };
+            }
+
+            // Function to format date
+            function formatDate(dateString) {
+                if (!dateString) return '-';
+                const options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
+                return new Date(dateString).toLocaleDateString('en-US', options);
+            }
+
+            // Function to get file icon based on extension
+            function getFileIcon(filename) {
+                const ext = filename.split('.').pop().toLowerCase();
+                const iconMap = {
+                    'pdf': 'fa-file-pdf text-red-400',
+                    'jpg': 'fa-file-image text-green-400',
+                    'jpeg': 'fa-file-image text-green-400',
+                    'png': 'fa-file-image text-green-400',
+                    'xlsx': 'fa-file-excel text-green-600',
+                    'xls': 'fa-file-excel text-green-600',
+                    'csv': 'fa-file-csv text-blue-400'
+                };
+                return iconMap[ext] || 'fa-file text-gray-400';
+            }
+
+            // Function to format file size
+            function formatFileSize(bytes) {
+                if (!bytes) return 'Unknown size';
+                if (bytes === 0) return '0 Bytes';
+
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            // Event listener for show buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('[data-patient-id]') && e.target.closest('button[title="Show"]')) {
+                    const patientId = e.target.closest('[data-patient-id]').getAttribute('data-patient-id');
+
+                    // Fetch patient data
+                    fetch(`/archive/${patientId}/show`)
                         .then(response => response.json())
                         .then(data => {
-                            document.getElementById('edit_fullname').value = data.patient.fullname || '';
-                            document.getElementById('edit_birthdate').value = data.patient.birthdate || '';
-                            document.getElementById('edit_gender').value = data.patient.gender || '';
-                            document.getElementById('edit_phone_number').value = data.patient
-                                .phone_number || '';
-                            document.getElementById('edit_address').value = data.patient.address || '';
-                            document.getElementById('edit_weight').value = data.patient.weight || '';
-                            document.getElementById('edit_height').value = data.patient.height || '';
-                            document.getElementById('edit_job').value = data.patient.job || '';
-                            document.getElementById('edit_tribes').value = data.patient.tribes || '';
-                            document.getElementById('edit_marital_status').value = data.patient
-                                .marital_status || '';
-                            document.getElementById('edit_reference').value = data.patient.reference || '';
-                            document.getElementById('edit_with_suspect').value = data.patient
-                                .with_suspect || '';
+                            const patient = data.patient;
+                            const files = data.files;
 
-                            // Set form action
-                            document.getElementById('editPatientForm').action =
-                                `/archive/${data.patient.id}`;
+                            // Populate personal information
+                            document.getElementById('show_fullname').textContent = patient.fullname || '-';
+                            document.getElementById('show_gender').textContent = patient.gender || '-';
+                            document.getElementById('show_birthdate').textContent = patient.birthdate || '-';
+                            document.getElementById('show_phone_number').textContent = patient.phone_number || '-';
+                            document.getElementById('show_address').textContent = patient.address || '-';
 
-                            // Store existing files
-                            existingFiles = data.files || [];
+                            // Calculate and show age
+                            if (patient.birthdate) {
+                                const age = calculateAge(patient.birthdate);
+                                document.getElementById('show_age').textContent = age + ' years old';
+                            } else {
+                                document.getElementById('show_age').textContent = '-';
+                            }
 
-                            // Update display
-                            updateFileDisplay();
+                            // Populate physical information
+                            document.getElementById('show_weight').textContent = patient.weight || '-';
+                            document.getElementById('show_height').textContent = patient.height || '-';
+
+                            // Calculate BMI
+                            if (patient.weight && patient.height) {
+                                const bmiData = calculateBMI(patient.weight, patient.height);
+                                document.getElementById('show_bmi').textContent = bmiData.bmi;
+                                const bmiStatusEl = document.getElementById('show_bmi_status');
+                                bmiStatusEl.textContent = bmiData.status;
+                                bmiStatusEl.className = `text-sm mt-1 ${bmiData.statusClass}`;
+                            } else {
+                                document.getElementById('show_bmi').textContent = '-';
+                                document.getElementById('show_bmi_status').textContent = '-';
+                                document.getElementById('show_bmi_status').className = 'text-sm mt-1 text-gray-400';
+                            }
+
+                            // Populate personal details
+                            document.getElementById('show_job').textContent = patient.job || '-';
+                            document.getElementById('show_tribes').textContent = patient.tribes || '-';
+                            document.getElementById('show_marital_status').textContent = patient.marital_status ||
+                                '-';
+                            document.getElementById('show_reference').textContent = patient.reference || '-';
+                            document.getElementById('show_with_suspect').textContent = patient.with_suspect || '-';
+
+                            // Populate timestamps
+                            document.getElementById('show_created_at').textContent = formatDate(patient.created_at);
+                            document.getElementById('show_updated_at').textContent = formatDate(patient.updated_at);
+
+                            // Handle files
+                            const filesContainer = document.getElementById('show_files_container');
+                            const noFilesMessage = document.getElementById('show_no_files');
+                            const filesList = document.getElementById('show_files_list');
+                            const fileCount = document.getElementById('show_file_count');
+
+                            if (files && files.length > 0) {
+                                filesContainer.classList.remove('hidden');
+                                noFilesMessage.classList.add('hidden');
+                                fileCount.textContent = `${files.length} file${files.length > 1 ? 's' : ''}`;
+
+                                // Clear previous files
+                                filesList.innerHTML = '';
+
+                                // Add each file
+                                files.forEach(file => {
+                                    const fileItem = document.createElement('div');
+                                    fileItem.className =
+                                        'bg-[#2d2d2d] p-4 rounded-lg flex items-center justify-between hover:bg-[#3d3d3d] transition-colors';
+
+                                    fileItem.innerHTML = `
+                            <div class="flex items-center space-x-3">
+                                <i class="fa ${getFileIcon(file.file_name)} fa-lg"></i>
+                                <div>
+                                    <div class="text-white font-medium">${file.file_name}</div>
+                                    <div class="text-gray-400 text-sm">
+                                        ${formatFileSize(file.file_size)} • Uploaded: ${formatDate(file.created_at)}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <a href="/storage/archives/${file.file_path}" 
+                                   target="_blank"
+                                   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                                    <i class="fa fa-eye mr-1"></i>View
+                                </a>
+                                <a href="/storage/archives/${file.file_path}" 
+                                   download="${file.file_name}"
+                                   class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                                    <i class="fa fa-download mr-1"></i>Download
+                                </a>
+                            </div>
+                        `;
+
+                                    filesList.appendChild(fileItem);
+                                });
+                            } else {
+                                filesContainer.classList.add('hidden');
+                                noFilesMessage.classList.remove('hidden');
+                                fileCount.textContent = '0 files';
+                            }
 
                             // Show modal
-                            modal.classList.remove('hidden');
+                            document.getElementById('showPatientModal').classList.remove('hidden');
                         })
                         .catch(error => {
-                            console.error('Error:', error);
-                            showToast('Failed to load patient data', 'error');
+                            console.error('Error fetching patient data:', error);
+                            alert('Error loading patient data. Please try again.');
                         });
-                });
+                }
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('showPatientModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeShowModal();
+                }
             });
         </script>
     </div>

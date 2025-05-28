@@ -101,6 +101,17 @@ class ArchiveController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        $patient = DB::table('patients')->where('id', $id)->first();
+        $files = DB::table('archives')->where('patient_id', $id)->get();
+
+        return response()->json([
+            'patient' => $patient,
+            'files' => $files
+        ]);
+    }
+
     public function update(Request $request, $id)
     {
         try {
