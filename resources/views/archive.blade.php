@@ -3,6 +3,7 @@
 
 <head>
     <title>DentArch</title>
+    <link rel="icon" type="image/jpeg" href="{{ asset('images/logo.jpg') }}">
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -106,9 +107,9 @@
                                             data-reference="{{ $patient->reference }}"
                                             data-with_suspect="{{ $patient->with_suspect }}"
                                             data-birthdate="{{ $patient->birthdate }}"
-                                            data-createde_at="{{ $patient->birthdate }}"
-                                            data-updated_at="{{ $patient->birthdate }}"
-                                            class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors"
+                                            data-created_at="{{ $patient->created_at }}"
+                                            data-updated_at="{{ $patient->updated_at }}"
+                                            class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors show-btn"
                                             title="Show">
                                             <i class="fa fa-eye"></i>
                                         </button>
@@ -754,22 +755,22 @@
             </div>
             <div class="flex gap-2">
                 ${!isNew ? `
-                                                                                                    <a href="/storage/archives/${file.file}" target="_blank" class="text-blue-400 hover:underline text-xs">
-                                                                                                        <i class="fa fa-eye"></i> View
-                                                                                                    </a>
-                                                                                                    <a href="/storage/archives/${file.file}" download class="text-green-400 hover:underline text-xs">
-                                                                                                        <i class="fa fa-download"></i> Download
-                                                                                                    </a>
-                                                                                                    <button type="button" class="delete-file-btn text-red-400 hover:text-red-300 text-xs" 
-                                                                                                            onclick="deleteExistingFile(${file.id}, this.closest('.flex'))">
-                                                                                                        <i class="fa fa-trash"></i> Delete
-                                                                                                    </button>
-                                                                                                ` : `
-                                                                                                    <button type="button" class="text-yellow-400 hover:text-yellow-300 text-xs" 
-                                                                                                            onclick="removeNewFile('${file.id}')">
-                                                                                                        <i class="fa fa-times"></i> Remove
-                                                                                                    </button>
-                                                                                                `}
+                                                                                                                                            <a href="/storage/archives/${file.file}" target="_blank" class="text-blue-400 hover:underline text-xs">
+                                                                                                                                                <i class="fa fa-eye"></i> View
+                                                                                                                                            </a>
+                                                                                                                                            <a href="/storage/archives/${file.file}" download class="text-green-400 hover:underline text-xs">
+                                                                                                                                                <i class="fa fa-download"></i> Download
+                                                                                                                                            </a>
+                                                                                                                                            <button type="button" class="delete-file-btn text-red-400 hover:text-red-300 text-xs" 
+                                                                                                                                                    onclick="deleteExistingFile(${file.id}, this.closest('.flex'))">
+                                                                                                                                                <i class="fa fa-trash"></i> Delete
+                                                                                                                                            </button>
+                                                                                                                                        ` : `
+                                                                                                                                            <button type="button" class="text-yellow-400 hover:text-yellow-300 text-xs" 
+                                                                                                                                                    onclick="removeNewFile('${file.id}')">
+                                                                                                                                                <i class="fa fa-times"></i> Remove
+                                                                                                                                            </button>
+                                                                                                                                        `}
             </div>
         `;
 
@@ -1220,6 +1221,12 @@
             // Function to format date
             function formatDate(dateString) {
                 if (!dateString) return '-';
+                const date = new Date(dateString);
+
+                if (isNaN(date.getTime())) {
+                    return '-';
+                }
+
                 const options = {
                     year: 'numeric',
                     month: 'long',
@@ -1227,7 +1234,7 @@
                     hour: '2-digit',
                     minute: '2-digit'
                 };
-                return new Date(dateString).toLocaleDateString('en-US', options);
+                return date.toLocaleDateString('en-US', options);
             }
 
             // Function to get file icon based on extension
@@ -1238,9 +1245,15 @@
                     'jpg': 'fa-file-image text-green-400',
                     'jpeg': 'fa-file-image text-green-400',
                     'png': 'fa-file-image text-green-400',
+                    'gif': 'fa-file-image text-green-400',
                     'xlsx': 'fa-file-excel text-green-600',
                     'xls': 'fa-file-excel text-green-600',
-                    'csv': 'fa-file-csv text-blue-400'
+                    'csv': 'fa-file-csv text-blue-400',
+                    'doc': 'fa-file-word text-blue-500',
+                    'docx': 'fa-file-word text-blue-500',
+                    'txt': 'fa-file-alt text-gray-400',
+                    'zip': 'fa-file-archive text-purple-400',
+                    'rar': 'fa-file-archive text-purple-400'
                 };
                 return iconMap[ext] || 'fa-file text-gray-400';
             }
@@ -1328,34 +1341,35 @@
                                 filesList.innerHTML = '';
 
                                 // Add each file
+                                // Di dalam loop files
                                 files.forEach(file => {
                                     const fileItem = document.createElement('div');
                                     fileItem.className =
                                         'bg-[#2d2d2d] p-4 rounded-lg flex items-center justify-between hover:bg-[#3d3d3d] transition-colors';
 
                                     fileItem.innerHTML = `
-                            <div class="flex items-center space-x-3">
-                                <i class="fa ${getFileIcon(file.file_name)} fa-lg"></i>
-                                <div>
-                                    <div class="text-white font-medium">${file.file_name}</div>
-                                    <div class="text-gray-400 text-sm">
-                                        ${formatFileSize(file.file_size)} • Uploaded: ${formatDate(file.created_at)}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex space-x-2">
-                                <a href="/storage/archives/${file.file_path}" 
-                                   target="_blank"
-                                   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
-                                    <i class="fa fa-eye mr-1"></i>View
-                                </a>
-                                <a href="/storage/archives/${file.file_path}" 
-                                   download="${file.file_name}"
-                                   class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors">
-                                    <i class="fa fa-download mr-1"></i>Download
-                                </a>
-                            </div>
-                        `;
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fa ${getFileIcon(file.file_name)} fa-lg"></i>
+                                            <div>
+                                                <div class="text-white font-medium">${file.file_name}</div>
+                                                <div class="text-gray-400 text-sm">
+                                                    ${formatFileSize(file.size)} • Uploaded: ${formatDate(file.uploaded_at)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <a href="${file.url}" 
+                                            target="_blank"
+                                            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                                                <i class="fa fa-eye mr-1"></i>View
+                                            </a>
+                                            <a href="${file.url}" 
+                                            download="${file.file_name}"
+                                            class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                                                <i class="fa fa-download mr-1"></i>Download
+                                            </a>
+                                        </div>
+                                    `;
 
                                     filesList.appendChild(fileItem);
                                 });

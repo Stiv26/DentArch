@@ -58,12 +58,49 @@ class ArchiveController extends Controller
             'with_suspect' => $request->with_suspect ?? null,
         ]);
 
-        $uploadedFiles = [];
+        // $uploadedFiles = [];
+        // if ($request->hasFile('files')) {
+        //     foreach ($request->file('files') as $file) {
+        //         $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        //         $path = $file->storeAs('archives', $fileName, 'public');
+        //         $uploadedFiles[] = $path;
+
+        //         $size = $file->getSize();
+        //         $sizeValue = number_format($size / 1024, 2);
+        //         $unit = 'KB';
+
+        //         if ($size >= 1048576) {
+        //             $sizeValue = number_format($size / 1048576, 2);
+        //             $unit = 'MB';
+        //         }
+
+        //         Archive::create([
+        //             'user_id' => Auth::id(),
+        //             'patient_id' => $patient->id,
+        //             'file_name' => $file->getClientOriginalName(),
+        //             'file' => $path,
+        //             'type' => $file->getClientOriginalExtension(),
+        //             'size' => $sizeValue,
+        //             'unit_size' => $unit,
+        //             'uploaded_at' => now(),
+        //         ]);
+        //     }
+        // }
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
                 $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('archives', $fileName, 'public');
-                $uploadedFiles[] = $path;
+
+                $folderPath = 'archives/' . $patient->id . '-' . $request->fullname;
+
+                $path = Storage::disk('filebase')->putFileAs(
+                    $folderPath,
+                    $file,
+                    $fileName,
+                    'public'
+                );
+
+                // Dapatkan URL publik
+                // $url = Storage::disk('filebase')->url($path);
 
                 $size = $file->getSize();
                 $sizeValue = number_format($size / 1024, 2);
@@ -78,7 +115,8 @@ class ArchiveController extends Controller
                     'user_id' => Auth::id(),
                     'patient_id' => $patient->id,
                     'file_name' => $file->getClientOriginalName(),
-                    'file' => $path,
+                    'file' => $path, // Simpan path S3
+                    // 'url' => $url,   // Simpan URL publik (optional)
                     'type' => $file->getClientOriginalExtension(),
                     'size' => $sizeValue,
                     'unit_size' => $unit,
@@ -105,6 +143,15 @@ class ArchiveController extends Controller
     {
         $patient = DB::table('patients')->where('id', $id)->first();
         $files = DB::table('archives')->where('patient_id', $id)->get();
+
+        $files = $files->map(function ($file) {
+            // Gunakan temporaryUrl dengan expiry time
+            $file->url = Storage::disk('filebase')->temporaryUrl(
+                $file->file,
+                now()->addMinutes(5) // URL berlaku 5 menit
+            );
+            return $file;
+        });
 
         return response()->json([
             'patient' => $patient,

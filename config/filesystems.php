@@ -41,7 +41,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
@@ -59,6 +59,19 @@ return [
             'throw' => false,
             'report' => false,
         ],
+
+        'filebase' => [
+            'driver' => 's3',
+            'key' => env('FILEBASE_ACCESS_KEY'), 
+            'secret' => env('FILEBASE_SECRET_KEY'), 
+            'endpoint' => 'https://s3.filebase.com',
+            'region' => 'us-east-1',
+            'bucket' => env('FILEBASE_BUCKET'), 
+            'use_path_style_endpoint' => true,
+            'url' => env('AWS_URL'),
+            'visibility' => 'public',
+        ],
+
 
     ],
 
