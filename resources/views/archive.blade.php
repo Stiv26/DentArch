@@ -742,38 +742,41 @@
                     '<span class="text-xs bg-green-600 px-2 py-1 rounded-full ml-2">NEW</span>' :
                     '<span class="text-xs bg-blue-600 px-2 py-1 rounded-full ml-2">EXISTING</span>';
 
-                item.innerHTML = `
-            <div class="flex items-center gap-2">
-                <i class="fa fa-file-${getFileIcon(file.type)} text-blue-400"></i>
-                <div>
-                    <div class="flex items-center">
-                        ${file.file_name}
-                        ${statusBadge}
-                    </div>
-                    <div class="text-xs text-gray-400">${file.size}</div>
-                </div>
-            </div>
-            <div class="flex gap-2">
-                ${!isNew ? `
-                                                                                                                                            <a href="/storage/archives/${file.file}" target="_blank" class="text-blue-400 hover:underline text-xs">
-                                                                                                                                                <i class="fa fa-eye"></i> View
-                                                                                                                                            </a>
-                                                                                                                                            <a href="/storage/archives/${file.file}" download class="text-green-400 hover:underline text-xs">
-                                                                                                                                                <i class="fa fa-download"></i> Download
-                                                                                                                                            </a>
-                                                                                                                                            <button type="button" class="delete-file-btn text-red-400 hover:text-red-300 text-xs" 
-                                                                                                                                                    onclick="deleteExistingFile(${file.id}, this.closest('.flex'))">
-                                                                                                                                                <i class="fa fa-trash"></i> Delete
-                                                                                                                                            </button>
-                                                                                                                                        ` : `
-                                                                                                                                            <button type="button" class="text-yellow-400 hover:text-yellow-300 text-xs" 
-                                                                                                                                                    onclick="removeNewFile('${file.id}')">
-                                                                                                                                                <i class="fa fa-times"></i> Remove
-                                                                                                                                            </button>
-                                                                                                                                        `}
-            </div>
-        `;
-
+                    item.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <i class="fa fa-file-${getFileIcon(file.type)} text-blue-400"></i>
+                            <div>
+                                <div class="flex items-center">
+                                    ${file.file_name}
+                                    ${statusBadge}
+                                </div>
+                                <div class="text-xs text-gray-400">${file.size}</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            ${!isNew ? `
+                                        <a href="${file.url}" 
+                                        target="_blank" 
+                                        class="text-blue-400 hover:underline text-xs">
+                                            <i class="fa fa-eye"></i> View
+                                        </a>
+                                        <a href="${file.url}" 
+                                        download="${file.file_name}"
+                                        class="text-green-400 hover:underline text-xs">
+                                            <i class="fa fa-download"></i> Download
+                                        </a>
+                                        <button type="button" class="delete-file-btn text-red-400 hover:text-red-300 text-xs" 
+                                                onclick="deleteExistingFile(${file.id}, this.closest('.flex'))">
+                                            <i class="fa fa-trash"></i> Delete
+                                        </button>
+                                    ` : `
+                                        <button type="button" class="text-yellow-400 hover:text-yellow-300 text-xs" 
+                                                onclick="removeNewFile('${file.id}')">
+                                            <i class="fa fa-times"></i> Remove
+                                        </button>
+                                    `}
+                        </div>
+                    `;
                 return item;
             }
 

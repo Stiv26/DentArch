@@ -133,6 +133,14 @@ class ArchiveController extends Controller
         $patient = DB::table('patients')->where('id', $id)->first();
         $files = DB::table('archives')->where('patient_id', $id)->get();
 
+        $files = $files->map(function ($file) {
+            $file->url = Storage::disk('filebase')->temporaryUrl(
+                $file->file,
+                now()->addMinutes(5)
+            );
+            return $file;
+        });
+
         return response()->json([
             'patient' => $patient,
             'files' => $files
@@ -161,76 +169,79 @@ class ArchiveController extends Controller
 
     public function update(Request $request, $id)
     {
-        try {
-            // Validasi data yang sama seperti store
-            $validated = $request->validate([
-                'fullname' => 'required|string|max:255',
-                'gender' => 'required|in:Male,Female',
-                'address' => 'required|string|max:255',
-                'phone_number' => 'required|string|max:20',
-                'birthdate' => 'required|date|before_or_equal:today',
-                'weight' => 'nullable|numeric|min:0',
-                'height' => 'nullable|numeric|min:0',
-                'job' => 'nullable|string|max:255',
-                'tribes' => 'nullable|string|max:255',
-                'marital_status' => 'nullable|in:Single,Married,Divorced,Widowed',
-                'reference' => 'nullable|string|max:255',
-                'with_suspect' => 'nullable|string|max:255',
-                'files' => 'nullable|array',
-                'files.*' => 'file|mimes:pdf,jpg,jpeg,png,xlsx,xls,csv|max:10240'
-            ]);
+        // Validasi data pasien
+        $validated = $request->validate([
+            'fullname' => 'required|string|max:255',
+            'gender' => 'required|in:Male,Female',
+            'address' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:20',
+            'birthdate' => 'required|date|before_or_equal:today',
+            'weight' => 'nullable|numeric|min:0',
+            'height' => 'nullable|numeric|min:0',
+            'job' => 'nullable|string|max:255',
+            'tribes' => 'nullable|string|max:255',
+            'marital_status' => 'nullable|in:Single,Married,Divorced,Widowed',
+            'reference' => 'nullable|string|max:255',
+            'with_suspect' => 'nullable|string|max:255',
+            'files' => 'nullable|array',
+            'files.*' => 'file|mimes:pdf,jpg,jpeg,png,xlsx,xls,csv|max:10240'
+        ]);
 
-            // Cari pasien berdasarkan ID
-            $patient = Patient::findOrFail($id);
+        // Update data pasien
+        $patient = Patient::findOrFail($id);
+        $patient->update([
+            'fullname' => $request->fullname,
+            'gender' => $request->gender,
+            'address' => $request->address,
+            'phone_number' => $request->phone_number,
+            'birthdate' => $request->birthdate,
+            'weight' => $request->weight ?? 0,
+            'height' => $request->height ?? 0,
+            'job' => $request->job ?? null,
+            'tribes' => $request->tribes ?? null,
+            'marital_status' => $request->marital_status ?? null,
+            'reference' => $request->reference ?? null,
+            'with_suspect' => $request->with_suspect ?? null,
+        ]);
 
-            // Update data pasien
-            $patient->update([
-                'fullname' => $request->fullname,
-                'gender' => $request->gender,
-                'address' => $request->address,
-                'phone_number' => $request->phone_number,
-                'birthdate' => $request->birthdate,
-                'weight' => $request->weight ?? 0,
-                'height' => $request->height ?? 0,
-                'job' => $request->job ?? null,
-                'tribes' => $request->tribes ?? null,
-                'marital_status' => $request->marital_status ?? null,
-                'reference' => $request->reference ?? null,
-                'with_suspect' => $request->with_suspect ?? null,
-            ]);
+        // Handle file uploads baru
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-            // Jika ada file baru yang diupload
-            if ($request->hasFile('files')) {
-                foreach ($request->file('files') as $file) {
-                    $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                    $path = $file->storeAs('archives', $fileName, 'public');
+                // Folder path menggunakan ID pasien
+                $folderPath = 'archives/' . $patient->id . '-' . $patient->fullname;
 
-                    $size = $file->getSize();
-                    $sizeValue = number_format($size / 1024, 2);
-                    $unit = 'KB';
+                $path = Storage::disk('filebase')->putFileAs(
+                    $folderPath,
+                    $file,
+                    $fileName,
+                    'public' 
+                );
 
-                    if ($size >= 1048576) {
-                        $sizeValue = number_format($size / 1048576, 2);
-                        $unit = 'MB';
-                    }
+                $size = $file->getSize();
+                $sizeValue = number_format($size / 1024, 2);
+                $unit = 'KB';
 
-                    Archive::create([
-                        'user_id' => Auth::id(),
-                        'patient_id' => $patient->id,
-                        'file_name' => $file->getClientOriginalName(),
-                        'file' => $path,
-                        'type' => $file->getClientOriginalExtension(),
-                        'size' => $sizeValue,
-                        'unit_size' => $unit,
-                        'uploaded_at' => now(),
-                    ]);
+                if ($size >= 1048576) {
+                    $sizeValue = number_format($size / 1048576, 2);
+                    $unit = 'MB';
                 }
-            }
 
-            return redirect()->back()->with('success', 'Data pasien berhasil diupdate!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengupdate data: ' . $e->getMessage());
+                Archive::create([
+                    'user_id' => Auth::id(),
+                    'patient_id' => $patient->id,
+                    'file_name' => $file->getClientOriginalName(),
+                    'file' => $path,
+                    'type' => $file->getClientOriginalExtension(),
+                    'size' => $sizeValue,
+                    'unit_size' => $unit,
+                    'uploaded_at' => now(),
+                ]);
+            }
         }
+
+        return redirect()->back()->with('success', 'Data pasien berhasil diperbarui!');
     }
 
     public function destroy($id)
@@ -254,31 +265,20 @@ class ArchiveController extends Controller
     public function removeFile($id)
     {
         try {
-            $file = Archive::where('id', $id)->firstOrFail();
+            $file = Archive::findOrFail($id);
 
-            if (Storage::disk('public')->exists($file->file)) {
-                Storage::disk('public')->delete($file->file);
-            }
+            // Hapus dari Filebase
+            Storage::disk('filebase')->delete($file->file);
 
+            // Hapus dari database
             $file->delete();
 
-            if (request()->expectsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'File deleted successfully!'
-                ]);
-            }
-
-            return redirect()->back()->with('success', 'File deleted successfully!');
+            return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            if (request()->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to delete file: ' . $e->getMessage()
-                ], 500);
-            }
-
-            return redirect()->back()->with('error', 'Failed to delete file: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete file: ' . $e->getMessage()
+            ], 500);
         }
     }
 }
